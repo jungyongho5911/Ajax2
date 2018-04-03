@@ -8,7 +8,7 @@ import lombok.Data;
 @Component
 @Lazy
 public class Command{
-	protected String type,id,pass;
+	protected String type,id,pass,data1,data2;
 	
 	
 }

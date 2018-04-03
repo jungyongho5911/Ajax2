@@ -53,25 +53,28 @@ INSERT INTO MEMBER VALUES (#{member.userid},#{member.password},#{member.name},
 	</insert>
 	
 	<sql id="type">
-		${type}.id,
+		${type}.
 	</sql>
 	
 	<select id="selectMemberById" resultType="com.bitcamp.web.domain.Member" parameterType="com.bitcamp.web.domain.Command">
-	SELECT * FROM MEMBER WHERE userid LIKE #{data1}
+	SELECT * FROM ${type} WHERE ${id} LIKE #{data1}
 	</select>
 	
 	<select id="selectAdminById" resultType="com.bitcamp.web.domain.Admin" parameterType="com.bitcamp.web.domain.Command">
-	SELECT * FROM Admin WHERE admID LIKE #{data1}
+	SELECT * FROM ${type} WHERE ${id} LIKE #{data1}
 	</select>
 	
 	<select id="exist" resultType="int" parameterType="com.bitcamp.web.domain.Command">
-	SELECT COUNT(*) FROM member WHERE userid LIKE #{id} AND password LIKE #{pass}
+	SELECT COUNT(*) FROM ${type}  
+	WHERE ${id}  LIKE #{data1} 
+	AND ${pass} LIKE #{data2}
 	</select>
 	
-	<select id="existA" resultType="int" parameterType="com.bitcamp.web.domain.Command">
-	SELECT COUNT(*) FROM Admin WHERE admID LIKE #{data1}
+	<select id="selectCount" resultType="int" parameterType="com.bitcamp.web.domain.Command">
+	SELECT COUNT(*) 
+	FROM ${type} 
 	</select>
-	
+
 	<select id="existArticles" resultType="int" parameterType="com.bitcamp.web.domain.Command">
 	SELECT COUNT(*) FROM board
 	</select>

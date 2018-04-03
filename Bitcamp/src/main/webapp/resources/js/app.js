@@ -328,10 +328,10 @@ app.member=(()=>{
 				if(app.rgx.adminCheck(p)==='yes'){
 					var pass = prompt('비번을 입력하세요');
 					 $.ajax({
-				            url : context+'/admin/'+adminID+'/login',
+				            url : context+'/admin/admID/login',
 				            method : 'POST',
 				            data : JSON.stringify({
-				            	userid:x,
+				            	userid:p,
 				            	password:pass
 				            }),
 				            dataType : 'json',
@@ -339,6 +339,7 @@ app.member=(()=>{
 				            success : x=>{
 				            	if(x.success==='1'){
 				            		var admID = x.admin.admID
+				            		var admPass = x.admin.admPass
 				            		alert(admID);
 				            		$.getScript(view,()=>{
 				            		$('#container').html(adminTab({id:'admin-Tab'}));	
@@ -437,26 +438,26 @@ app.member=(()=>{
     					+'  </tr>'
     					+'  </table>')
              .attr('style','border:solid black 2px; width:55%;');
-    		 if(app.rgx($('#input-pass').vla())==='yes'){
+    		 if(app.rgx($('#input-pass').val())==='yes'){
     			 $.ajax({
     				 
     			 });
     		 }else{
     			 alert('다시 입력해주세요');
-    			 $('#input-pass').vla('').focus();
+    			 $('#input-pass').val('').focus();
     		 }
     		
     	 });
      };
      var login=x=>{
     	 x.preventDefault();
-		 var userid = $('#input-userid').val();
          var jason={
+        		 'userid' : $('#input-userid').val(),
                  'password' : $('#input-password').val()
          };
         alert('로그인 버튼 클릭');
         $.ajax({
-            url : context+'/user/'+userid+'/login',
+            url : context+'/member/userid/login',
             method : 'POST',
             data : JSON.stringify(jason),
             dataType : 'json',

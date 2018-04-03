@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.bitcamp.web.domain.Admin;
 import com.bitcamp.web.domain.Board;
 import com.bitcamp.web.domain.Command;
 import com.bitcamp.web.domain.Image;
@@ -47,7 +48,7 @@ public class Controller {
             consumes="application/json")
     public  Map<?,?> login(
     		@PathVariable String type,
-            @PathVariable String userid,
+    		@PathVariable String userid,
             @RequestBody Member m) {
         Map<String,Object> map = new HashMap<>();
         logger.info("welcome {}","member!");
@@ -55,58 +56,51 @@ public class Controller {
         logger.info("전달된PASS {}",m.getPassword());
         cmd = new Command();
         cmd.setType(type);
-        cmd.setId(m.getUserid());
-        cmd.setPass(m.getPassword());
+        switch (type) {
+		case "member":
+			  cmd.setId("userid");
+		      cmd.setPass("password");
+			break;
+		case "admin":
+			System.out.println("admin");
+			  cmd.setId("admid");
+		      cmd.setPass("admpass");   
+			break;
+
+		default:
+			break;
+		}
+        cmd.setData1(m.getUserid());
+	    cmd.setData2(m.getPassword());
         int count = new ICountSerive() {
             @Override
             public int execute(Command cmd) {
                 return mapper.exist(cmd);
             }
         }.execute(cmd);
-        System.out.println("로그인 성공 여부"+count);
+        if(type.equals("member") && count == 1) {
+            Object o = new IGetService() {
+                
+                @Override
+                public Object execute(Command cmd) {
+                    return mapper.selectMemberById(cmd);
+                }
+            }.execute(cmd);
+            map.put("user", o);
+            System.out.println("Member : "+o);
+        }else if(type.equals("admin") && count == 1){
+        	Object o = new IGetService() {
+                
+                @Override
+                public Object execute(Command cmd) {
+                    return mapper.selectAdminById(cmd);
+                }
+            }.execute(cmd);
+            map.put("admin", o);
+            System.out.println("admin : "+o);
+        }
         
-        /*switch (type) {
-		case "user":
-			count = new ICountSerive() {
-	            @Override
-	            public int execute(Command cmd) {
-	                return mapper.exist(cmd);
-	            }
-	        }.execute(cmd);
-	        if(count == 1) {
-	            Object o = new IGetService() {
-	                
-	                @Override
-	                public Object execute(Command cmd) {
-	                    return mapper.selectMemberById(cmd);
-	                }
-	            }.execute(cmd);
-	            map.put("user", o);
-	            System.out.println("Member : "+o);
-	        }
-	        
-			break;
-		case "admin":
-			   count = (int) new IGetService() {	             
-		             @Override
-		             public Object execute(Command cmd) {
-		                 return mapper.existA(cmd);
-		             }
-		         }.execute(cmd);
-		         System.out.println("test"+count);
-		         if(count == 1) {
-		             Object o = new IGetService() {
-		                 
-		                 @Override
-		                 public Object execute(Command cmd) {
-		                     return mapper.selectAdminById(cmd);
-		                 }
-		             }.execute(cmd);
-		             map.put("admin", o);
-		             System.out.println("admin : "+o);
-		         }
-			break;
-		}*/
+        System.out.println("로그인 성공 여부"+count);
         map.put("success", count+"");
         return map;
     }

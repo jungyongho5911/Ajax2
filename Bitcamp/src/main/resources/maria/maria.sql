@@ -12,7 +12,7 @@
             where ROWNUM between 1 and 5;
 
 
-            drop table Admun;
+            drop table Admin;
 create table Image(
    imageId varchar(20) primary key,
    filename varchar(20),
@@ -21,9 +21,10 @@ create table Image(
 );
 
 create table Admin(
-   admID varchar(20) primary key
+   admid varchar(20) primary key,
+   admpass varchar(20)
 );
-insert into Admin(admID) values ('12345');
+insert into Admin(admid,admpass) values ('12345','123');
 
 insert into board(title,content,userid) values ('안녕하세요','안녕하세요 만나서 반갑습니다','skyfor1004'); commit;
 insert into board(title,content,userid) values ('안녕하세요','안녕하세요 만나서 반갑습니다','skyfor1004');

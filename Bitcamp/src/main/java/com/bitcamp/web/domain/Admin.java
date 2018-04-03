@@ -9,5 +9,5 @@ import lombok.Data;
 @Component
 @Lazy
 public class Admin {
-	private String admID;
+	private String admID,admPass;
 }
