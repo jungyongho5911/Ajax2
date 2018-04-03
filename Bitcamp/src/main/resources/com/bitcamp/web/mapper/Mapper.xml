@@ -53,7 +53,7 @@ INSERT INTO MEMBER VALUES (#{member.userid},#{member.password},#{member.name},
 	</insert>
 	
 	<sql id="type">
-		
+		${type}.id,
 	</sql>
 	
 	<select id="selectMemberById" resultType="com.bitcamp.web.domain.Member" parameterType="com.bitcamp.web.domain.Command">
