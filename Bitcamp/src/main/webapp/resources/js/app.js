@@ -22,6 +22,20 @@ app = {init:x =>{
         app.member.onCreate();
     })
 }};
+app.rgx = {
+		isNumber : x=>{
+			return typeof x === 'number' && isFinite(x);
+		},
+		passwordChecker : x=>{
+			var r = /^[0-9a-zA-z]{4,10}$/;
+			return r.test(x)?"yes":"no";
+			//숫자 , 영문 대ㅗ문자 4자리부터 10자리까지 제한
+		},
+		adminCheck : x=>{
+			var r = /[0-9]{5}$/;
+			return r.test(x)?"yes":"no";
+		}
+}
 app.home = {
 		move : x=>{	
 		$.getScript(x,()=>{
@@ -44,32 +58,31 @@ app.nav = (x=>{
 		     setContentView();
 		     app.home.move(view);
 		};
-	var setContentView = x =>{
-		 $(createATag({
-			 id:'a-board',
-			 val:createSpan({
-				 id:'span-board',
-				 clazz:'glyphicon-map-marker',
-				 val:'게시판'})}))
-         .appendTo($('#li-board'))
-         .on('click',e=>{
-        	 e.preventDefault();
-          	 app.board.onCreate();
-          	 $('#a-board').remove();
-          	$(createATag({
-          		id:'a-board',
-          		val:createSpan({
-          			id:'span-board',
-          			clazz:'glyphicon-map-marker',
-          			val:'글쓰기'})}))
-            .appendTo($('#li-board'))
-            .on('click',e =>{
-            	 e.preventDefault();
-           		alert('글쓰기 누름');
-           		app.board.boardWriting();
-           		
-            });
-         });
+		var setContentView = x =>{
+	         $(createATag({
+	             id:'a-board',
+	             val:createSpan({
+	                 id:'span-board',
+	                 clazz:'glyphicon-map-marker',
+	                 val:'게시판'})}))
+	        .appendTo($('#li-board'))
+	        .on('click',e=>{
+	            e.preventDefault();
+	              app.board.onCreate();
+	              $('#a-board').remove();
+	             $(createATag({
+	                 id:'a-board',
+	                 val:createSpan({
+	                     id:'span-board',
+	                     clazz:'glyphicon-map-marker',
+	                     val:'글쓰기'})}))
+	           .appendTo($('#li-board'))
+	           .on('click',e =>{
+	                e.preventDefault();
+	                  alert('글쓰기 누름');
+	                  app.board.boardWriting();
+	           });
+	        });
          $(createButtonNav1st())
                  .appendTo($('#div-nav-1st'))
                  .click(()=>{
@@ -82,7 +95,7 @@ app.nav = (x=>{
                  .click(()=>{
                  alert('LOGIN BUTTON CLICK');
          });
-        
+         
 	};
 	return {onCreate:onCreate};
 })();
@@ -99,95 +112,116 @@ app.board=(x=>{
 		   articles(1);
 	   };
 	   var boardWriting=()=>{
-	          alert('글쓰기 누르고 페이지 이동?');
-	          $.getScript(view,()=>{
-	              $('#container').html($(createForm({
-	            	  id:'form-wirte',
-	            	  clazz:'form-wirte',
-	            	  action : ''
-	            		  })).html(boardW({
-	            			  id :'board-wirte'
-	            		  })));
-	              $(createButton({
-	                  id : 'a-submit',
-	                  clazz : '',
-	                  val : '전송'
-	              })).appendTo('#div-btn-group')
-	              	.attr('style','margin-right:20px;')
-	              	.on('click',e=>{
-	              		e.preventDefault();
-	                 /* $.post( context+"/board/post/article",{
-	                	  name:$('#input-name').val(),
-	                	  title:$('#input-title').val(),
-	                	  content:$('#input-content').text()
-	                  }, x=>{
-	                	  $( ".result" ).html( data );
-	                	});*/
-	              		$.ajax({
-	                        url : context + '/board/post/articles',
-	                        data:JSON.stringify({
-	                            userid : $('#input-name').val(),
-	                            title : $('#input-title').val(),
-	                                  content : $('#input-content').val()
-	                        }),
-	                        dataType:'json',
-	                        contentType:'application/json',
-	                        method:'POST',
-	                        success:d=>{
-	                            $('#form-write').ajaxForm({
-	                                url : context + '/board/file/upload',
-	                                dataType : 'text',
-	                                enctype : "multipart/form-data",
-	                                beforeSubmit : function(){
-	                                    alert("로딩화면 !");
-	                                },
-	                                success : function(data) {
-	                                    alert("등록완료 !" + data.result);
-	                                }
-	                            }).submit();
-	                        },
-	                        error:function(x,s,m){alert(m);}
-	                    });
-	                });
-	              $(createButton({
-	                  id : 'a-cancel',
-	                  clazz : '',
-	                  val : '취소'
-	              })).appendTo('#div-btn-group')
-	              .attr('style','margin-right:20px;')
-	              .on('click',e=>{
-	                  e.preventDefault();
-	              });
-	              $(createButton({
-	                  id : 'a-fileupload',
-	                  clazz : '',
-	                  val : '파일추가'
-	              })).appendTo('#div-btn-group')
-	              .attr('style','margin-right:20px;')
-	              .on('click',e=>{
-	                  e.preventDefault();
-	                  $.magnificPopup.open(
-	                          {items:
-	                          {src :
-	                        	  $(createForm({
-	                        		  id:'form-fileupload',
-	                        		  clazz:'form-fileupload',
-	                        		  action:context+'/board/file/upload'
-	                        	  })).html(fileupload({
-		                        	  clazz:'popup'
-		                        		  })).html(
-		                        				  createDiv({
-		                        					  id:'div-fileupload',
-		                        					  clazz:'input-group stylish-input-group' 
-		                        				  })
-		                        				  )},
-		                        	  type : 'inline'},
-		                        	  0);
-	                 }); 
-	          });
-	   };
+           alert('글쓰기 누르고 페이지 이동?');
+           $.getScript(view,()=>{
+               $('#container').html($(createForm({
+            	   id : 'form-write',
+            	   clazz : '',
+            	   action : ''
+               })).html(boardW({
+            	   id : 'board-wirte'
+               })));  
+               $(createButton({
+            	   id : 'a-subbit',
+            	   clazz: '',
+            	   val : '전송'
+               })).appendTo('#div-btn-group').on('click',e=>{
+            	   e.preventDefault();
+            	  /* $.post( context+'/board/post/articles', {
+            		   		name : $('input-name').val(),
+            		   		title : $('input-title').val(),
+            		   		content : $('input-content').text()
+            		   		
+            	   }, x=>{
+            		   $( ".result" ).html(data);
+            		 });*/
+            	   $.ajax({
+            		   url : context + '/board/post/articles',
+            		   data:JSON.stringify({
+            			   userid : $('#input-name').val(),
+            			   title : $('#input-title').val(),
+           		   		   content : $('#input-content').val()
+            		   }),
+            		   dataType:'json',
+            		   contentType:'application/json',
+            		   method:'POST',
+            		   success:d=>{
+            			   alert('글 등록만 성공');
+            		   },
+            		   error:function(x,s,m){alert(m);}
+            	   });
+               });
+               $(createButton({
+            	   id : 'a-cancel',
+            	   clazz: '',
+            	   val : '취소'
+               })).appendTo('#div-btn-group').on('click',e=>{
+            	   e.preventDefault();
+               });
+               $(createButton({
+            	   id : 'a-fileupload',
+            	   clazz: '',
+            	   val : '파일추가'
+               })).appendTo('#div-btn-group').on('click',e=>{
+            	   e.preventDefault();
+            	   $.magnificPopup.open(
+            			   {items:
+            			   		{src : $(createForm({
+            			   			id : 'form-fileupload',
+            			   			clazz : 'form-fileupload',
+            			   			action : context+'/board/file/upload',
+            			   			enctype : 'multipart/form-data'
+            			   		})).append(
+            			   				'<div class="text-center popup">'
+            			   				+'<h1>FILE UPLOAD</h1>'
+            			   				+'<div class="row">'
+            			   				+'<div class="col-sm-6 col-sm-offset-3">'
+            			   				+'<div id="imaginary_container">'
+            			   				+'<div id="div-fileupload" class="input-group">'
+            			   				+'<span id="span-file-1"></span><span id="span-file-2"></span>'
+            			   				+'</div>'
+            			   				+'</div>'
+            			   				+'</div>'
+            			   				+'</div>'
+            			   		)},
+                     		   type : 'inline'},
+                    		   0);
+            	   $(createInput({id : '', clazz : 'form-control display-inline', type: 'file'}))
+            	   .attr('style','width:50%; margin: 0auto')
+            	   .attr('placeholder','file')
+            	   .attr('name' , 'test')
+            	   .attr('value','선택')
+            	   .appendTo('#div-fileupload');
+            	   $(createInput({id : '', clazz : 'form-control display-inline', type: 'submit'}))
+            	   .attr('style','width:50%; margin: 0auto')
+            	   .attr('placeholder','submit')
+            	   .attr('value','전송')
+            	   .appendTo('#span-file-1')
+            	   .on('click',x=>{
+        			   $('#form-fileupload').ajaxForm({
+        				   url : context + '/board/file/upload',
+        				   dataType : 'text',
+        				   enctype : "multipart/form-data",
+        				   beforeSubmit : function(){
+        					   alert("로딩화면 !");
+        				   },
+        				   success : function(data) {
+        					   alert("등록완료 !" + data.result);
+        				   }
+        			   }).submit();
+            	   });
+            	   $(createInput({id : '', clazz : 'form-control display-inline', type: 'reset'}))
+            	   .attr('style','width:50%; margin: 0auto')
+            	   .attr('placeholder','reset')
+            	   .attr('value','취소')
+            	   .appendTo('#span-file-2')
+            	   .on('click',x=>{alert('취소클릭')});
+            	   });
+           });
+       };
 	   var articles=x=>{
 		   $.getJSON(context+'/articles/'+x,d=>{
+			   alert('2');
 				$.getScript(context+'/resources/js/view.js',()=>{
 				$('#content').empty();
 				$('#container').empty();
@@ -214,7 +248,7 @@ app.board=(x=>{
                	.html('<a href ="#">수정</a>/<a href = "#">삭제</a>');
                $('#articles').attr('style','width:60%; margin:0 auto');
    
-              $(createNav({id:'nav-page',clazz:''})).appendTo('#container').attr('style','margin-left:600px;');
+              $(createNav({id:'nav-page',clazz:''})).appendTo('#container');
               $(createUL({id:'ul-page',clazz:'pagination'})).appendTo('#nav-page');
              var t = '';
              if(d.page.prevBlock){
@@ -266,14 +300,153 @@ app.member=(()=>{
     		 .appendTo('#container');
     		 $(loginInbox('loginInbox'))
     		 .appendTo('#content');
-    		 $(loginOutbox('loginOutbox'))
-    		 .appendTo('#loginInbox');
+    		 $(createDiv({id:'loginOutbox',clazz:'loginOutbox'}))
+    		 .appendTo('#content');
+    		 $(createATag({id:'a-join',val:'회원가입'}))
+    		 .appendTo('#loginOutbox').attr('style','margin-left:300px;')
+    		 .on('click',e=>{
+    			 join(e);
+    		 });
+    		 $(createATag({id:'a-admin',val:'관리자'}))
+    		 .appendTo('#loginOutbox')
+    		 .on('click',e=>{
+    			 admin(e);
+    		 });
     		 $(createButton({id:'login-btn',clazz:'default',val:'Login'}))
     		 .appendTo('#td-login-btn')
     		 .on('click',e=>{
     			login(e);
              });
          });
+     };
+     var admin=x=>{
+    	 x.preventDefault();
+			if(confirm('관리자 클릭')){
+				var p = prompt('직원번호를 입력하세요');
+				alert('입력된 직원번호 : '+p);
+				var adminID= p;
+				if(app.rgx.adminCheck(p)==='yes'){
+					var pass = prompt('비번을 입력하세요');
+					 $.ajax({
+				            url : context+'/admin/'+adminID+'/login',
+				            method : 'POST',
+				            data : JSON.stringify({
+				            	userid:x,
+				            	password:pass
+				            }),
+				            dataType : 'json',
+				            contentType : 'application/json',
+				            success : x=>{
+				            	if(x.success==='1'){
+				            		var admID = x.admin.admID
+				            		alert(admID);
+				            		$.getScript(view,()=>{
+				            		$('#container').html(adminTab({id:'admin-Tab'}));	
+				            		});	            		
+				            	}else{
+				            		alert('없는 아이디');
+				            	}
+				            }
+				            
+					 });   
+				}else{
+					alert('잘못된 번호입니다');	
+				}
+				    
+			}else{
+				alert('직원만 접근 가능합니다.');
+
+			}
+     };
+     var join=x=>{
+    	 x.preventDefault();
+    	 alert('회원 가입 클릭');
+    	 $.getScript(view,()=>{
+    		 $('#content').html('<table id="" style="margin: 0 auto;height: 400px;border: 2px">'
+    					+'  <tr>'
+    					+'  <td style="width: 150px">아이디</td>'
+    					+'  <td>'
+    					+'    <input id="join_id" name="join_id" style="margin-right: 88px" type="text" />'
+    					+'    <button id="check_dupl_btn" name="check_dupl_btn">중복확인</button>'
+    					+'  </td>'
+    					+'  </tr>'
+    					+'  '
+    					+'  <tr>'
+    					+'  <td>이름</td>'
+    					+'  <td><input id="input-name" name="name"  style="margin-right: 150px"  type="text" /></td>'
+    					+'  </tr>'
+    					+'  '
+    					+'  <tr>'
+    					+'  <td>암호</td>'
+    					+'  <td><input id="input-pass" name="pass"   style="margin-right: 150px" type="password" /></td>'
+    					+'  </tr>'
+    					+'  '
+    					+'  <tr>'
+    					+'  <td>암호확인</td>'
+    					+'  <td><input name="confirm_pass"   style="margin-right: 150px" type="password" /></td>'
+    					+'  </tr>'
+    					+'  '
+    					+'  <tr>'
+    					+'  <td>이메일</td>'
+    					+'  <td><input name="email" style="margin-right: 41px" type="email" />@<select>'
+    					+'  <option>naver.com</option>'
+    					+'  <option>daum.com</option>'
+    					+'  <option>google.com</option>'
+    					+'  </select>'
+    					+'  </td>'
+    					+'  </tr>'
+    					+'  <tr>'
+    					+'  <td>가입일</td>'
+    					+'  <td><input name="join_date" type="date" /></td>'
+    					+'  </tr>'
+    					+'  <tr>'
+    					+'  <td>주민번호</td>'
+    					+'  <td><input name="ssn" type="text" />-<input type="number" placeholder="" min="1" max="9"/></td>'
+    					+'  </tr>'
+    					+'  '
+    					+'  <tr>'
+    					+'  <td>핸드폰번호</td>'
+    					+'  <td>'
+    					+'  <input type="radio" name="phone" checked="checked"/>SKT'
+    					+'  <input type="radio" name="phone" />KT'
+    					+'  <input type="radio" name="phone" />LG'
+    					+'  <br />'
+    					+'  <select>'
+    					+'  <option>010</option>'
+    					+'  </select>'
+    					+'  <input pattern="[0-9]{4}" type="text" />'
+    					+'  <input pattern="[0-9]{4}" type="text" />'
+    					+'  </td>'
+    					+'  </tr>'
+    					+'  '
+    					+'  <tr>'
+    					+'  <td>주소</td>'
+    					+'  <td>'
+    					+'  <input name="addr" type="button" value="주소검색"/>'
+    					+'  <input type="text" />'
+    					+'  <input type="hidden" name="cmd" value="insert" />'
+    					+'  <input type="hidden" name="dir" value="user" />'
+    					+'  <input type="hidden" name="page" value="login" />'
+    					+'  </td>'
+    					+'  </tr>'
+    					+'  <tr>'
+    					+'    <td colspan="2" style="text-align: center;">'
+    					+'      <button id="join_confirm_btn" style="width: 160px; height: 30px">확 인</button> '
+    					+'      <button style="width: 160px; height: 30px">취 소</button>'
+    					+'    </td>'
+    					+'  </tr>'
+    					+'  </table>')
+             .attr('style','border:solid black 2px; width:55%;');
+    		 if(app.rgx($('#input-pass').vla())==='yes'){
+    			 $.ajax({
+    				 
+    			 });
+    		 }else{
+    			 alert('다시 입력해주세요');
+    			 $('#input-pass').vla('').focus();
+    		 }
+    		
+    	 });
      };
      var login=x=>{
     	 x.preventDefault();
@@ -283,7 +456,7 @@ app.member=(()=>{
          };
         alert('로그인 버튼 클릭');
         $.ajax({
-            url : context+'/members/'+userid+'/login',
+            url : context+'/user/'+userid+'/login',
             method : 'POST',
             data : JSON.stringify(jason),
             dataType : 'json',
@@ -369,11 +542,11 @@ app.algorithm = (()=>{
                    .click(()=>{
                 	   alert('클릭 성공');
                 	   $right.empty();
-                       $(createInput({id:'input-algo-init',val:'초기값 입력',type:''}))
+                       $(createInput({id:'input-algo-init',val:'초기값 입력',type : 'text'}))
                        .appendTo($right);
-                       $(createInput({id:'input-algo-limit',val:'리밋값 입력',type:''}))
+                       $(createInput({id:'input-algo-limit',val:'리밋값 입력',type : 'text'}))
                        .appendTo($right);
-                       $(createInput({id:'input-algo-tol',val:'공차 입력',type:''}))
+                       $(createInput({id:'input-algo-tol',val:'공차 입력',type : 'text'}))
                        .appendTo($right);
                        $(createButton({id:'btn-result',clazz:'btn-primary',val:'결과보기'}))
                        .appendTo($right)
@@ -398,11 +571,11 @@ app.algorithm = (()=>{
                    .click(()=>{
                 	   alert('클릭 성공');
                 	   $right.empty();
-                       $(createInput({id:'input-algo-init',val:'초기값 입력',type:''}))
+                       $(createInput({id:'input-algo-init',val:'초기값 입력',type : 'text'}))
                        .appendTo($right);
-                       $(createInput({id:'input-algo-limit',val:'리밋값 입력',type:''}))
+                       $(createInput({id:'input-algo-limit',val:'리밋값 입력',type : 'text'}))
                        .appendTo($right);
-                       $(createInput({id:'input-algo-tol',val:'공차 입력',type:''}))
+                       $(createInput({id:'input-algo-tol',val:'공차 입력',type : 'text'}))
                        .appendTo($right);
                        $(createButton({id:'btn-result',clazz:'btn-primary',val:'결과보기'}))
                        .appendTo($right)
@@ -427,11 +600,11 @@ app.algorithm = (()=>{
                    .click(()=>{
                 	   alert('클릭 성공');
                 	   $right.empty();
-                       $(createInput({id:'input-algo-init',val:'초기값 입력',type:''}))
+                       $(createInput({id:'input-algo-init',val:'초기값 입력',type : 'text'}))
                        .appendTo($right);
-                       $(createInput({id:'input-algo-limit',val:'리밋값 입력',type:''}))
+                       $(createInput({id:'input-algo-limit',val:'리밋값 입력',type : 'text'}))
                        .appendTo($right);
-                       $(createInput({id:'input-algo-tol',val:'공차 입력',type:''}))
+                       $(createInput({id:'input-algo-tol',val:'공차 입력',type : 'text'}))
                        .appendTo($right);
                        $(createButton({id:'btn-result',clazz:'btn-primary',val:'결과보기'}))
                        .appendTo($right)
@@ -456,11 +629,11 @@ app.algorithm = (()=>{
                    .click(()=>{
                 	   alert('클릭 성공');
                 	   $right.empty();
-                	   $(createInput({id:'input-algo-init',val:'초기값 입력',type:''}))
+                	   $(createInput({id:'input-algo-init',val:'초기값 입력',type : 'text'}))
                        .appendTo($right);
-                       $(createInput({id:'input-algo-limit',val:'리밋값 입력',type:''}))
+                       $(createInput({id:'input-algo-limit',val:'리밋값 입력',type : 'text'}))
                        .appendTo($right);
-                       $(createInput({id:'input-algo-tol',val:'공차 입력',type:''}))
+                       $(createInput({id:'input-algo-tol',val:'공차 입력',type : 'text'}))
                        .appendTo($right);
                        $(createButton({id:'btn-result',clazz:'btn-primary',val:'결과보기'}))
                        .appendTo($right)
@@ -485,11 +658,11 @@ app.algorithm = (()=>{
                    .click(()=>{
                 	  
                    });
-                   $(createInput({id:'input-algo-init',val:'초기값 입력',type:''}))
+                   $(createInput({id:'input-algo-init',val:'초기값 입력',type : 'text'}))
                    .appendTo($right);
-                   $(createInput({id:'input-algo-limit',val:'리밋값 입력',type:''}))
+                   $(createInput({id:'input-algo-limit',val:'리밋값 입력',type : 'text'}))
                    .appendTo($right);
-                   $(createInput({id:'input-algo-tol',val:'공차 입력',type:''}))
+                   $(createInput({id:'input-algo-tol',val:'공차 입력',type : 'text'}))
                    .appendTo($right);
                    $(createButton({id:'btn-result',clazz:'btn-primary',val:'결과보기'}))
                    .appendTo($right)
@@ -529,7 +702,7 @@ app.algorithm = (()=>{
             	   var $right=$('#math0');
             	   $('#a-td0').on('click',()=>{
             		   $right.empty();
-                       $(createInput({id:'input-algo-tol',val:'소수 판별 숫자 입력',type:''}))
+                       $(createInput({id:'input-algo-tol',val:'소수 판별 숫자 입력',type : 'text'}))
                        .appendTo($right);
                        $(createButton({id:'btn-result',clazz:'btn-primary',val:'결과보기'}))
                        .appendTo($right)
@@ -549,7 +722,7 @@ app.algorithm = (()=>{
             	   $('#a-td1').on('click',()=>{
             		   alert('클릭');
             		   $right.empty();
-                       $(createInput({id:'input-algo-tol',val:'소수 범위 입력',type:''}))
+                       $(createInput({id:'input-algo-tol',val:'소수 범위 입력',type : 'text'}))
                        .appendTo($right);
                        $(createButton({id:'btn-result',clazz:'btn-primary',val:'결과보기'}))
                        .appendTo($right)
@@ -568,9 +741,9 @@ app.algorithm = (()=>{
             	   });
             	   $('#a-td2').on('click',()=>{
             		   $right.empty();
-            		   $(createInput({id:'input-algo-init',val:'초기값 입력',type:''}))
+            		   $(createInput({id:'input-algo-init',val:'초기값 입력',type : 'text'}))
                        .appendTo($right);
-                       $(createInput({id:'input-algo-limit',val:'리밋값 입력',type:''}))
+                       $(createInput({id:'input-algo-limit',val:'리밋값 입력',type : 'text'}))
                        .appendTo($right);
                        $(createButton({id:'btn-result',clazz:'btn-primary',val:'결과보기'}))
                        .appendTo($right)
@@ -626,7 +799,7 @@ app.algorithm = (()=>{
             	   var $right=$('#sort0');
             	   $('#a-td0').on('click',()=>{
             		   $right.empty();
-                       $(createInput('input-algo-tol','정렬 숫자 입력',''))	
+                       $(createInput('input-algo-tol','정렬 숫자 입력','text'))	
                        .appendTo($right);
                        $(createButton('btn-result','btn-primary','결과보기'))
                        .appendTo($right)
@@ -660,11 +833,11 @@ app.algorithm = (()=>{
             	   $('#app3').remove();
             	   $('#app0').attr('rowspan',arrange().length+1);
             	   var $right=$('#app0');
-            	   $(createInput({id:'input-algo-init',val:'초기값 입력',type:''}))
+            	   $(createInput({id:'input-algo-init',val:'초기값 입력',type : 'text'}))
                    .appendTo($right);
-                   $(createInput({id:'input-algo-limit',val:'리밋값 입력',type:''}))
+                   $(createInput({id:'input-algo-limit',val:'리밋값 입력',type : 'text'}))
                    .appendTo($right);
-                   $(createInput({id:'input-algo-tol',val:'공차 입력',type:''}))
+                   $(createInput({id:'input-algo-tol',val:'공차 입력',type : 'text'}))
                    .appendTo($right);
                    $(createButton({id:'btn-result',calzz:'btn-primary',val:'결과보기'}))
                    .appendTo($right)

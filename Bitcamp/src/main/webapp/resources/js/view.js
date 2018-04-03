@@ -1,6 +1,7 @@
 function hello(){
     return '<h1> Hello !! AJAX 2 </h1>';
 }
+
 var createNav=x=>{
     return'<nav id="'+x.id+'" class="'+x.clazz+'"></nav>';
 }
@@ -113,12 +114,12 @@ var loginInbox=x=>{
     +'  </table> ';
 }
 var loginOutbox=x=>{
-    return'<table id="'+x+'">' 
+    return'<div id="'+x+'">' 
     +'<tr rowspan=2>'
     +' <a id="" href="#"> 관리자 </a>'
     +'<a id="" href="#"> 회원가입 </a>'
     +'</tr>'
-    +'</table>';
+    +'</div>';
 }
 var navigation=x=>{
     return ' <nav class="navbar navbar-default">'
@@ -319,27 +320,13 @@ var createInput=x=>{
 var createText=x=>{
     return '<h1 style="text-align: center;" id="'+x+'"></h1>';
 }
-var fileupload=x=>{
-	return '<div style="text-align: center" class="'+x.clazz+'">'
-	+'<h1>FILE UPLOAD</h1>'
-	+'</div>'
-	//+'<div id="div-fileupload" style="text-align: center" >'
-	//+'<input type="file" size="30" name="test_file" style="display:inline-block;"><br /><br /><br />'
-	//+'<button id= type="submit" class="btn btn-primary btn-lg">확 인</button>'
-	//+'<button type="button" class="btn btn-default btn-lg">취 소</button>'
-	//+'</div>';
-}
-var createForm=x=>{
-		return '<form id="'+x.id+'" class="'+x.clazz+'" action="'+x.action+' method="post"></form>';
-}
 var boardW=x=>{
-    return '<div id="" class="">'
-    +'    <div class="board_type1_write_wrap">'
+    return '    <div id="'+x.id+'" class="board_type1_write_wrap">'
     +'      <table class="board_write_type1">'
     +'        <tr>'
     +'          <td class="left" >'
     +'            <div class="column_name">글제목</div>'
-    +'            <div class="column_desc"><input id="input-title" type="text" name="title" class="text_type1"/></div>'
+    +'            <div class="column_desc"><input type="text" id="input-title" name="title" class="text_type1"/></div>'
     +'          </td>'
     +'        </tr>'
     +'        <tr>'
@@ -347,7 +334,7 @@ var boardW=x=>{
     +'            <ul class="split_three">'
     +'              <li>'
     +'                <div class="column_name">ID</div>'
-    +'                <div class="column_desc"><input id="input-name" type="text" name="userid" class="text_type1"/></div>'
+    +'                <div class="column_desc"><input type="text" id="input-name" name="userid" class="text_type1"/></div>'
     +'              </li>'
     +'              <li>'
     +'                <div class="column_name">옵션</div>'
@@ -378,5 +365,54 @@ var boardW=x=>{
     +'    <div class="board_type1_write_button_wrap">'
     +'      <div id="div-btn-group">'
     +'      </div>  '
-    +'  </div>';
+    +'    </div>';
+}
+var fileupload=x=>{
+    return '<div class="'+x.clazz+'">'
+        +'<h1>FILE UPLOAD</h1>'
+            +'<div class="row">'
+            +'  <div class="col-sm-6 col-sm-offset-3">'
+            +'      <div id="imaginary_container">'
+            +'          <div id="div-fileupload" class="input-group">'
+            +'              <span id="span-file-1"></span><span id="span-file-2"></span>'
+            +'          </div>'
+            +'      </div>'
+            +'  </div>'
+            +'</div>';
+}
+var adminTab=x=>{
+	return '<section id="'+x+'">'
+	+'<h1 id="title">회원관리</h1>'
+
+	  +'<table id="admin-main-table">'
+	    +'<tr>'
+	      +'<td >'
+	        +'<a id="move_member_btn" style="cursor: pointer;">'
+	          +'<img src="${image}/admin_main_member.jpg"'
+	            +'id="move_member_btn_img"'
+	           +'alt="" />'
+	        +'</a>'
+	      +'</td>'
+	      +'<td >준비중</td>'
+	      +'<td >준비중</td>'
+	    +'</tr>'
+	    +'<tr>'
+	      +'<td>준비중</td>'
+	      +'<td>준비중</td>'
+	      +'<td> 테이블 생성 <br />'
+	        +'<form id="admin-crate-table-form" action="${context}/admin.do?cmd=create-table">'
+	          +'<select name="table_name" id="table_name">'
+	            +'<option value="member">회 원</option>'
+	            +'<option value="attend">출 석</option>'
+	            +'<option value="mobile">모바일</option>'
+	          +'</select>'
+	          +'<button id="admin-create-table-btn">생 성</button>'
+	        +'</form>'
+	      +'</td>'
+	    +'</tr>'
+	  +'</table>'
+	+'</section>';
+}
+var createForm=x=>{
+    return '<form id="'+x.id+'" action="'+x.action+'" class="'+x.clazz+'" method="post"></form>';
 }

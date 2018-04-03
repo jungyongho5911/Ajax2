@@ -12,15 +12,19 @@
             where ROWNUM between 1 and 5;
 
 
-            drop table board;
-create table board(
-   bbs_seq int(1) auto_increment primary key,
-   title varchar(100),
-   content varchar(300),
-   userid varchar(20),
-    timestamp not null default now(),
-   foreign key(userid) references Member(userid)
+            drop table Admun;
+create table Image(
+   imageId varchar(20) primary key,
+   filename varchar(20),
+   extension varchar(20),
+   regadte timestamp not null default now()
 );
+
+create table Admin(
+   admID varchar(20) primary key
+);
+insert into Admin(admID) values ('12345');
+
 insert into board(title,content,userid) values ('안녕하세요','안녕하세요 만나서 반갑습니다','skyfor1004'); commit;
 insert into board(title,content,userid) values ('안녕하세요','안녕하세요 만나서 반갑습니다','skyfor1004');
 insert into board(title,content,userid) values ('궁금합니다','이건 얼마인지 궁금합니다','skyfor1004');
